@@ -10,6 +10,24 @@ npx claude-code-guard init
 
 ---
 
+## Install
+
+```bash
+git clone https://github.com/didierthill/claude-code-guard
+cd claude-code-guard
+npm install
+npm run build
+npm install -g . --prefix ~/.npm-global
+claude-code-guard init
+```
+
+> First time? Add the global bin to your PATH:
+> ```bash
+> echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
+> ```
+
+---
+
 ## What It Does
 
 Installs 6 shell hooks into your Claude Code configuration that automatically enforce rules at the tool level — before or after the agent acts.
