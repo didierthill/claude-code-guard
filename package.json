@@ -1,0 +1,48 @@
+{
+  "name": "claude-code-guard",
+  "version": "1.0.0",
+  "description": "Governance hooks for Claude Code — agent guard, config protection, audit log, time tracking, and more.",
+  "type": "module",
+  "bin": {
+    "claude-code-guard": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "hooks",
+    "templates"
+  ],
+  "scripts": {
+    "build": "tsup src/cli.ts --format esm --dts --clean",
+    "dev": "tsup src/cli.ts --format esm --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "hooks",
+    "governance",
+    "ai-agents",
+    "guardrails",
+    "audit",
+    "security"
+  ],
+  "author": "Didier Thill <didier@it-transform.be>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/IT-Transform/claude-code-guard.git"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.9.1",
+    "commander": "^13.1.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsup": "^8.4.0",
+    "typescript": "^5.7.0"
+  }
+}
