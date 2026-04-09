@@ -23,7 +23,12 @@ claude-code-guard init
 
 > First time? Add the global bin to your PATH:
 > ```bash
+> # zsh
 > echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
+> # bash
+> echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
+> # fish
+> fish_add_path ~/.npm-global/bin
 > ```
 
 ---
