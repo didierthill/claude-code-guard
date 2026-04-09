@@ -152,3 +152,7 @@ Hooks are registered in `~/.claude/settings.json` (global) or `.claude/settings.
 ## License
 
 MIT
+
+---
+
+*This code has been AI-assisted using [Claude Code](https://claude.ai/claude-code).*
