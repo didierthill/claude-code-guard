@@ -10,7 +10,7 @@ const program = new Command();
 program
   .name("claude-code-guard")
   .description("Governance hooks for Claude Code — guardrails that prevent AI agent mistakes.")
-  .version("1.0.0");
+  .version("1.1.0");
 
 program
   .command("init")
@@ -26,7 +26,7 @@ program
 
 program
   .command("add <hook>")
-  .description("Add a specific hook (agent-guard, config-protection, audit-log, time-tracker, compact-suggester, session-reminder)")
+  .description("Add a specific hook (agent-guard, config-protection, audit-log, time-tracker, compact-suggester, session-reminder, session-learn)")
   .option("--global", "Install globally")
   .action(addCommand);
 

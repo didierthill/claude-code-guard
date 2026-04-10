@@ -9,6 +9,8 @@ export interface HookConfig {
   threshold?: number;
   interval?: number;
   lines?: string[];
+  learnTargets?: string[];
+  rtkEnabled?: boolean;
 }
 
 export interface GuardConfig {
@@ -79,6 +81,11 @@ export function getDefaultConfig(scope: "global" | "project"): GuardConfig {
           "Check existing code before creating new files",
         ],
       },
+      "session-learn": {
+        enabled: true,
+        learnTargets: ["LL.md"],
+        rtkEnabled: true,
+      },
     },
   };
 }
@@ -119,6 +126,12 @@ export const HOOK_DESCRIPTIONS: Record<string, { event: string; matcher: string;
     matcher: "",
     blocking: false,
     description: "Inject critical context reminders every prompt",
+  },
+  "session-learn": {
+    event: "PreCompact",
+    matcher: "",
+    blocking: false,
+    description: "Extract session learnings and RTK savings before compaction",
   },
 };
 

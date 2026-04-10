@@ -35,7 +35,7 @@ claude-code-guard init
 
 ## What It Does
 
-Installs 6 shell hooks into your Claude Code configuration that automatically enforce rules at the tool level — before or after the agent acts.
+Installs 7 shell hooks into your Claude Code configuration that automatically enforce rules at the tool level — before or after the agent acts.
 
 | Hook | Type | What it does |
 |------|------|-------------|
@@ -45,6 +45,7 @@ Installs 6 shell hooks into your Claude Code configuration that automatically en
 | **time-tracker** | 🟢 Advisory | JSONL time tracking per project and session |
 | **compact-suggester** | 🟢 Advisory | Suggests `/compact` at strategic intervals |
 | **session-reminder** | 🟢 Advisory | Injects context reminders on every prompt |
+| **session-learn** | 🟢 Advisory | Extracts session learnings + RTK savings before compaction |
 
 ## Quick Start
 
@@ -60,7 +61,7 @@ claude-code-guard add audit-log
 claude-code-guard remove compact-suggester
 ```
 
-## Why These 6 Hooks?
+## Why These 7 Hooks?
 
 ### 1. Agent Guard — Preventing Amnesia
 
@@ -94,6 +95,19 @@ Claude Code has a finite context window. This hook counts tool calls and suggest
 ### 6. Session Reminder — Fighting Drift
 
 Injects your custom context lines on every prompt. Configurable — use it for whatever your agent keeps forgetting.
+
+### 7. Session Learn — Institutional Memory
+
+Fires before context compaction (`PreCompact`). Prompts the agent to extract actionable learnings from the current session before they're lost:
+
+- **Errors resolved** — bugs, crashes, misconfigurations that were fixed
+- **Patterns discovered** — approaches that worked (or didn't) and why
+- **Decisions made** — architecture choices, library selections, trade-offs
+- **User corrections** — feedback on the agent's approach
+
+Learnings are written to `LL.md` in structured format (Date, Symptom, Cause, Impact, Fix, Rule).
+
+**RTK integration** (optional): If [RTK](https://github.com/contextcraft/rtk) is installed, the hook also reports weekly token savings, top commands by impact, and missed optimization opportunities.
 
 ## Configuration
 
@@ -142,6 +156,45 @@ Claude Code supports lifecycle hooks — shell scripts that fire before or after
 - `exit 2` — Block (reject the action with an error message)
 
 Hooks are registered in `~/.claude/settings.json` (global) or `.claude/settings.json` (project-level). `claude-code-guard` manages this automatically.
+
+## Companion Tools
+
+These tools pair well with claude-code-guard for a complete agent governance + efficiency setup:
+
+### RTK — Token-Optimized CLI Proxy
+
+[RTK](https://github.com/contextcraft/rtk) is a Rust-based CLI proxy that filters verbose command output before it hits the context window. Transparent hook integration — `git status` becomes `rtk git status` automatically.
+
+- **60-90% input token savings** on CLI output (measured 91.5% across 150+ commands)
+- Automatic secret redaction (complements audit-log hook)
+- Zero config — install and forget
+
+```bash
+cargo install rtk
+```
+
+### Caveman — Output Compression
+
+[Caveman](https://github.com/JuliusBrussee/caveman) is a Claude Code plugin that makes the agent respond in compressed, caveman-style language — same technical accuracy, ~75% fewer output tokens.
+
+```bash
+# Install as Claude Code plugin
+claude install caveman
+```
+
+Includes bonus skills: `caveman-commit` (terse commits), `caveman-review` (one-line code reviews), `caveman-compress` (~45% input savings on CLAUDE.md files).
+
+### Cost Optimization — Advisor Strategy
+
+When spawning sub-agents, use model tiering to cut costs without losing quality:
+
+```
+model: "haiku"   → file searches, grep, simple reads (85% cheaper)
+model: "sonnet"  → code changes, moderate complexity (default)
+model: "opus"    → architecture decisions, complex debugging (when needed)
+```
+
+This pairs with the **agent-guard** hook — sub-agents are both context-aware (guard) and cost-efficient (tiering).
 
 ## Requirements
 

@@ -1,6 +1,6 @@
 {
   "name": "claude-code-guard",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Governance hooks for Claude Code — agent guard, config protection, audit log, time tracking, and more.",
   "type": "module",
   "bin": {
