@@ -169,6 +169,22 @@ I've shipped products where the first deploy took weeks, not days. But the first
 
 ---
 
+## A confession and a frustration
+
+I'm not a software engineer. My background is infrastructure — servers, networks, systems. I'm a founder who learned to build software because nobody else was going to do it at the budget I had.
+
+AI didn't replace my engineering team. I never had one. It became one.
+
+But here's what nobody warns you about when your engineering team is an AI: it's agreeable. Relentlessly, infuriatingly agreeable. It tells you your code is great when it's not. It says "done" when it shipped a stub. It apologizes and immediately does the exact same thing again.
+
+I'm the kind of person who wants facts, not reassurance. Tell me the code is broken — don't tell me it's "a great start." Tell me the architecture has a flaw — don't tell me it's "solid overall." When I ask "is this done?" I mean "would a paying customer use this without calling support in the first hour?" Not "does the file exist?"
+
+That frustration is why the guardrails exist. Every hook in [claude-code-guard](https://github.com/didierthill/024-OSS-forged-claude-code-guard) started as a moment where I caught the AI cutting a corner and thought: never again. The agent-guard exists because sub-agents kept asking me for credentials that were already documented. The quality templates exist because "done" kept meaning "the function exists but returns null." The session-reminder exists because the AI would forget the rules mid-conversation.
+
+77 documented failures. 22 projects. That's not a framework born from theory. It's scar tissue turned into automation.
+
+---
+
 ## The uncomfortable truth
 
 AI didn't lower the bar for building software. It lowered the bar for *looking like* you built software.
