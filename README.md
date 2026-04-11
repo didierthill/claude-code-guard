@@ -37,17 +37,21 @@ claude-code-guard init
 
 ## What It Does
 
-Installs 7 shell hooks into your Claude Code configuration that automatically enforce rules at the tool level — before or after the agent acts.
+Installs 9 shell hooks into your Claude Code configuration that automatically enforce rules at the tool level — before or after the agent acts.
 
 | Hook | Type | What it does |
 |------|------|-------------|
 | **agent-guard** | 🔴 Blocking | Blocks sub-agents that don't reference your project docs |
 | **config-protection** | 🔴 Blocking | Prevents agents from weakening linter/formatter configs |
+| **tenant-isolation** | 🟡 Advisory* | Detects database queries missing tenant scoping |
+| **pii-guard** | 🟡 Advisory* | Detects PII exposure in logs, responses, and hardcoded data |
 | **audit-log** | 🟢 Advisory | Logs every bash command with automatic secret redaction |
 | **time-tracker** | 🟢 Advisory | JSONL time tracking per project and session |
 | **compact-suggester** | 🟢 Advisory | Suggests `/compact` at strategic intervals |
 | **session-reminder** | 🟢 Advisory | Injects context reminders on every prompt |
 | **session-learn** | 🟢 Advisory | Extracts session learnings + RTK savings before compaction |
+
+*🟡 = Advisory by default, can be set to blocking via config (`"blocking": true`). Disabled by default — enable with `claude-code-guard add tenant-isolation` or `claude-code-guard add pii-guard`.*
 
 ## Quick Start
 
@@ -110,6 +114,44 @@ Fires before context compaction (`PreCompact`). Prompts the agent to extract act
 Learnings are written to `LL.md` in structured format (Date, Symptom, Cause, Impact, Fix, Rule).
 
 **RTK integration** (optional): If [RTK](https://github.com/contextcraft/rtk) is installed, the hook also reports weekly token savings, top commands by impact, and missed optimization opportunities.
+
+### 8. Tenant Isolation — Data Boundary Enforcement
+
+Scans every file you edit for database queries (`.find()`, `.updateMany()`, `.aggregate()`, etc.) and checks if `tenantId` appears within ±5 lines. If not — warning.
+
+**Why this matters:** In multi-tenant SaaS, a single missing tenant filter is a data breach. Not a bug — a breach. This hook catches it at write time, not in code review.
+
+```json
+{
+  "tenant-isolation": {
+    "enabled": true,
+    "tenantField": "tenantId",
+    "blocking": false
+  }
+}
+```
+
+Set `blocking: true` if you want hard enforcement. Customize `tenantField` to match your schema (`organizationId`, `companyId`, etc.).
+
+### 9. PII Guard — Personal Data Protection
+
+Detects four categories of PII exposure:
+
+1. **PII in logs** — `console.log(user.email)`, `logger.info(req.body.password)`
+2. **Hardcoded PII** — real email addresses, IBAN numbers in source code (skips test files)
+3. **PII in URLs** — `?email=john@example.com` in query parameters
+4. **PII in responses** — `res.json({ password, hash, ssn })` returned to clients
+
+```json
+{
+  "pii-guard": {
+    "enabled": true,
+    "blocking": false
+  }
+}
+```
+
+Advisory by default — warns but doesn't block. Set `blocking: true` for GDPR-critical projects.
 
 ## Configuration
 
@@ -197,6 +239,19 @@ model: "opus"    → architecture decisions, complex debugging (when needed)
 ```
 
 This pairs with the **agent-guard** hook — sub-agents are both context-aware (guard) and cost-efficient (tiering).
+
+## Roadmap
+
+Planned hooks and features — contributions welcome.
+
+- [ ] **dependency-check** — Block imports of deprecated or vulnerable packages
+- [ ] **test-coverage-gate** — Warn when modified files lack corresponding test files
+- [ ] **commit-message-lint** — Enforce conventional commits format
+- [ ] **dead-code-detector** — Flag unused exports and unreachable functions
+- [ ] **migration-guard** — Block schema changes without a corresponding migration file
+- [ ] **cost-tracker** — Estimate token cost per session based on model and tool usage
+
+Have an idea? [Open an issue](https://github.com/didierthill/024-OSS-forged-claude-code-guard/issues).
 
 ## Requirements
 

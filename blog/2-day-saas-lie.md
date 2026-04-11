@@ -1,4 +1,4 @@
-# I Ship Production SaaS With AI. The "2-Day Deploy" Crowd Is Building Sandcastles.
+# The "2-Day SaaS" Is a Demo. Here's What Production Actually Looks Like.
 
 Every week, someone posts "I built a SaaS in 48 hours with Claude/Cursor/GPT." The screenshot looks clean. The demo works. The likes pile up.
 
@@ -145,8 +145,6 @@ Developer prompt
 ```
 
 **A lessons-learned file that compounds.** Every time something breaks — a deploy failure, a stub that slipped through, a tenant isolation miss — it goes into a structured file with symptom, cause, fix, and rule. The AI reads this file before starting work. Mistake once, never again. In theory. In practice, maybe 80% of the time. But 80% beats zero.
-
-**The right AI model for the right job.** Not everything needs the most expensive model. File searches and grep? Use the cheap model — 85% cost reduction, same result. Code generation? Mid-tier model. Architecture decisions and complex debugging? Top-tier model. Bulk translation? Don't even use Claude — route it to Gemini Flash through an API, it's faster and cheaper for that job.
 
 ---
 

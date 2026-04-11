@@ -5,12 +5,15 @@ import { homedir } from "node:os";
 export interface HookConfig {
   enabled: boolean;
   requiredFiles?: string[];
+  passReminder?: string[];
   protectedFiles?: string[];
   threshold?: number;
   interval?: number;
   lines?: string[];
   learnTargets?: string[];
   rtkEnabled?: boolean;
+  blocking?: boolean;
+  tenantField?: string;
 }
 
 export interface GuardConfig {
@@ -86,6 +89,15 @@ export function getDefaultConfig(scope: "global" | "project"): GuardConfig {
         learnTargets: ["LL.md"],
         rtkEnabled: true,
       },
+      "tenant-isolation": {
+        enabled: false,
+        tenantField: "tenantId",
+        blocking: false,
+      },
+      "pii-guard": {
+        enabled: false,
+        blocking: false,
+      },
     },
   };
 }
@@ -132,6 +144,18 @@ export const HOOK_DESCRIPTIONS: Record<string, { event: string; matcher: string;
     matcher: "",
     blocking: false,
     description: "Extract session learnings and RTK savings before compaction",
+  },
+  "tenant-isolation": {
+    event: "PostToolUse",
+    matcher: "Edit|Write",
+    blocking: false,
+    description: "Detect database queries missing tenant scoping (multi-tenant SaaS)",
+  },
+  "pii-guard": {
+    event: "PostToolUse",
+    matcher: "Edit|Write",
+    blocking: false,
+    description: "Detect PII exposure in logs, responses, URLs, and hardcoded data",
   },
 };
 
