@@ -171,7 +171,7 @@ I've shipped products where the first deploy took weeks, not days. But the first
 
 ## A confession and a frustration
 
-I'm not a software engineer. Not anymore, anyway. I wrote PHP, MySQL, and Perl in the late 90s — back when debugging meant `echo` and `print_r`, your editor was vim open on the production server, and you deployed by typing `:wq`. Then I spent two decades in infrastructure and IT leadership — consolidating IT across 7 countries in EMEA, standardizing 1,000+ assets, leading digital transformation and AI adoption programs. When I started building my own SaaS products, I came back to code with rusty hands, modern tools, and zero tolerance for things that don't work in production.
+I'm not a software engineer. Not anymore, anyway. I wrote PHP, MySQL, and Perl in the late 90s — back when debugging meant `echo` and `print_r`, your editor was vim open on the production server, and you deployed by typing `:wq`. Then I spent two decades in infrastructure and IT leadership — consolidating IT across 7 countries in EMEA, standardizing 1,000+ assets, leading digital transformation and AI adoption programs. I've documented the 20 IT traps that kill growing organizations — I've seen every one of them from the inside. When I started building my own SaaS products, I came back to code with rusty hands, modern tools, and zero tolerance for things that don't work in production.
 
 AI didn't replace my engineering team. I never had one. It became one.
 
