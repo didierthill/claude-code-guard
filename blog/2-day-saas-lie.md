@@ -24,32 +24,7 @@ Let's be specific about what a "2-day SaaS" looks like under the hood:
 
 That's not a product. That's a prototype wearing a product's clothes.
 
-```
-What they show on Twitter:
-
-+--------------+
-|   Login      |  <- Clerk
-|   Dashboard  |  <- Hardcoded data
-|   Settings   |  <- Does nothing
-+--------------+
-     "SaaS"
-
-
-What's actually behind it:
-
-+--------------+
-|   Login      |  <- Single tenant
-|   Dashboard  |  <- No error states
-|   Settings   |  <- No backend
-|              |
-|   (nothing)  |  <- No audit trail
-|   (nothing)  |  <- No billing
-|   (nothing)  |  <- No GDPR
-|   (nothing)  |  <- No i18n
-|   (nothing)  |  <- No tests
-+--------------+
-    "Project"
-```
+![The anatomy of a 2-day SaaS — what they show vs what's behind it](images/2day_saas_anatomy.svg)
 
 ---
 
@@ -69,26 +44,7 @@ I run multiple products on a shared monorepo. Here's what exists behind each one
 
 **Billing, i18n, GDPR consent, legal compliance.** Each one is its own package. Each one has its own test suite. Each one talks to the others through defined interfaces.
 
-```
-Production SaaS — actual stack:
-
-+---------+---------+---------+
-|  Auth   |  RBAC   |  Audit  |
-+---------+---------+---------+
-|  i18n   | Billing |  GDPR   |
-+---------+---------+---------+
-| Feature |  Error  |  Seed   |
-|  Flags  | Handling|  Data   |
-+---------+---------+---------+
-| Tenant  |  Legal  |  Tests  |
-| Isolat. | Comply. | (1945+) |
-+---------+---------+---------+
-
-Packages: 46
-Tests: 1945+
-Deploy: Kaniko on k3s
-Time to build: months, not days
-```
+![Production SaaS — actual stack: 46 packages, 1945+ tests, months not days](images/production_saas_stack.svg)
 
 Each of these boxes is a package I wrote once and reuse across every product. That's 46 packages today. The second product took half the time of the first. The third took a quarter. That compounding is what AI-assisted development should aim for — not one-off speed, but structural leverage.
 
@@ -120,29 +76,7 @@ I'm not going to pretend I have this figured out. I have it *less broken* than i
 
 **A guard on sub-agents.** When I spin up a sub-agent for a specific task, a hook inspects its instructions. If the prompt doesn't include "read the project rules" and "read the secrets file," the hook blocks the agent from launching. Hard stop. Not a suggestion — a gate.
 
-```
-Agent launch flow:
-
-Developer prompt
-      |
-      v
-+------------+    NO
-| Mentions   |---------> BLOCKED
-| rules +    |          (exit 2)
-| secrets?   |
-+-----+------+
-      | YES
-      v
-+------------+
-| Inject     |
-| quality    |
-| reminder   |
-+-----+------+
-      |
-      v
-  Agent runs
-  (with context)
-```
+![Agent launch flow — every sub-agent goes through this gate](images/agent_launch_flow.svg)
 
 **A lessons-learned file that compounds.** Every time something breaks — a deploy failure, a stub that slipped through, a tenant isolation miss — it goes into a structured file with symptom, cause, fix, and rule. The AI reads this file before starting work. Mistake once, never again. In theory. In practice, maybe 80% of the time. But 80% beats zero.
 
