@@ -175,7 +175,7 @@ AI didn't replace my engineering team. I never had one. It became one.
 
 But here's what nobody warns you about when your engineering team is an AI: it's agreeable. Relentlessly, infuriatingly agreeable. It tells you your code is great when it's not. It says "done" when it shipped a stub. It apologizes and immediately does the exact same thing again.
 
-I'm the kind of person who wants facts, not reassurance. Tell me the code is broken — don't tell me it's "a great start." Tell me the architecture has a flaw — don't tell me it's "solid overall." When I ask "is this done?" I mean "would a paying customer use this without calling support in the first hour?" Not "does the file exist?"
+I run on one principle: no BS, facts over everything. Tell me the code is broken. Tell me the architecture has a flaw. When I ask "is this done?" I mean "would a paying customer use this without calling support in the first hour?" Not "does the file exist?"
 
 That frustration is why the guardrails exist. Every hook in [claude-code-guard](https://github.com/didierthill/024-OSS-forged-claude-code-guard) started as a moment where I caught the AI cutting a corner and thought: never again. The agent-guard exists because sub-agents kept asking me for credentials that were already documented. The quality templates exist because "done" kept meaning "the function exists but returns null." The session-reminder exists because the AI would forget the rules mid-conversation.
 
