@@ -7,6 +7,8 @@ npx claude-code-guard init
 ```
 
 > Born from 77 documented agent failures across 22 projects over 6 months. Each hook exists because something went wrong without it.
+>
+> **Read:** [I Ship Production SaaS With AI. The "2-Day Deploy" Crowd Is Building Sandcastles.](blog/2-day-saas-lie.md)
 
 ---
 

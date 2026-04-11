@@ -1,9 +1,10 @@
 #!/bin/bash
 # ──────────────────────────────────────────────────────────
 # claude-code-guard: session-reminder
-# Hook UserPromptSubmit — Injects critical context every prompt
+# Hook UserPromptSubmit — Injects context reminder every prompt
 #
 # Reads custom lines from ~/.claude-guard/config.json.
+# Compact single-line output to minimize token usage.
 # Non-blocking (exit 0 always).
 # ──────────────────────────────────────────────────────────
 
@@ -16,16 +17,12 @@ try:
     c = json.load(open('$CONFIG_FILE'))
     lines = c.get('hooks', {}).get('session-reminder', {}).get('lines', [])
     if lines:
-        print('CONTEXT REMINDER:')
-        for line in lines:
-            print(f'- {line}')
+        print('GUARD: ' + ' | '.join(lines))
 except:
     pass
 " 2>/dev/null
 else
-  echo "CONTEXT REMINDER:"
-  echo "- Read CLAUDE.md before making changes"
-  echo "- Check existing code before creating new files"
+  echo "GUARD: Read CLAUDE.md before changes. Check existing code before creating new files."
 fi
 
 exit 0

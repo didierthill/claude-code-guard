@@ -3,6 +3,30 @@
 > A feature is "done" when it meets ALL criteria below.
 > No exceptions. No "I'll fix it later."
 
+## Automatic rejection
+
+A deliverable is REJECTED if any of these are present:
+
+```
+// TODO: implement
+// FIXME: complete later
+throw new Error('Not implemented')
+return null // temp
+console.log('debug')
+Math.random() // fake data
+catch (e) {} // silent swallow
+```
+
+A deliverable is also REJECTED if:
+- A function exists but does nothing (or returns a fixed value)
+- A UI button triggers no backend action
+- An API route returns `{ ok: true }` with no business logic
+- Data is hardcoded to simulate real results
+- TypeScript uses `any`, `@ts-ignore`, or `as unknown as X`
+- A component shows "Coming soon" without an explicit feature flag
+
+**If a feature can't be fully implemented: STOP and report the blocker. Don't ship a stub.**
+
 ## Code Quality Checklist
 
 - [ ] No `TODO`, `FIXME`, `HACK` comments left behind

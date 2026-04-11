@@ -56,4 +56,31 @@ if [ -n "$MISSING" ]; then
   exit 2
 fi
 
+# ── PASSED — inject quality reminder into sub-agent context ──
+# Read custom reminder lines from config, fall back to defaults
+if [ -f "$CONFIG_FILE" ]; then
+  REMINDER=$(python3 -c "
+import json
+try:
+    c = json.load(open('$CONFIG_FILE'))
+    lines = c.get('hooks', {}).get('agent-guard', {}).get('passReminder', [])
+    if lines:
+        for l in lines:
+            print(l)
+except:
+    pass
+" 2>/dev/null)
+fi
+
+if [ -n "$REMINDER" ]; then
+  echo "AGENT RULES (injected by guard):"
+  echo "$REMINDER"
+else
+  echo "AGENT RULES (injected by guard):"
+  echo "1. Search project docs BEFORE asking questions."
+  echo "2. ZERO stubs. No TODO, no fake data, no 'Not implemented'."
+  echo "3. 'Done' = works end-to-end for a real user. UI without backend = NOT done."
+  echo "4. Read QUALITY.md for the full definition of done."
+fi
+
 exit 0
