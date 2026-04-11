@@ -3,25 +3,16 @@
 **Governance hooks for Claude Code** — guardrails that prevent AI agents from making the same mistakes twice.
 
 ```bash
-npx claude-code-guard init
+git clone https://github.com/didierthill/024-OSS-forged-claude-code-guard.git
+cd 024-OSS-forged-claude-code-guard
+npm install && npm run build
+npm install -g . --prefix ~/.npm-global
+claude-code-guard init
 ```
 
 > Born from 77 documented agent failures across 22 projects over 6 months. Each hook exists because something went wrong without it.
 >
-> **Read:** [I Ship Production SaaS With AI. The "2-Day Deploy" Crowd Is Building Sandcastles.](blog/2-day-saas-lie.md)
-
----
-
-## Install
-
-```bash
-git clone https://github.com/didierthill/claude-code-guard
-cd claude-code-guard
-npm install
-npm run build
-npm install -g . --prefix ~/.npm-global
-claude-code-guard init
-```
+> **Read:** [The "2-Day SaaS" Is a Demo. Here's What Production Actually Looks Like.](blog/2-day-saas-lie.md)
 
 > First time? Add the global bin to your PATH:
 > ```bash
@@ -57,7 +48,7 @@ Installs 9 shell hooks into your Claude Code configuration that automatically en
 
 ```bash
 # Interactive setup
-npx claude-code-guard init
+claude-code-guard init
 
 # Check what's installed
 claude-code-guard status
@@ -67,7 +58,7 @@ claude-code-guard add audit-log
 claude-code-guard remove compact-suggester
 ```
 
-## Why These 7 Hooks?
+## The 9 Hooks
 
 ### 1. Agent Guard — Preventing Amnesia
 
@@ -75,6 +66,27 @@ Sub-agents start with zero context. They don't know your stack, your conventions
 
 **Before this hook:** 40% of sub-agent sessions wasted time reinventing existing code.
 **After:** Zero.
+
+When blocked, the agent sees:
+
+```
+claude-code-guard: Sub-agent prompt missing required references: CLAUDE.md
+                                                                 
+Add these to your sub-agent prompt:
+  - READ CLAUDE.md before starting work
+
+Configure required files: ~/.claude-guard/config.json → hooks.agent-guard.requiredFiles
+```
+
+When the prompt passes, the hook injects quality reminders into the sub-agent's context:
+
+```
+AGENT RULES (injected by guard):
+1. Search project docs BEFORE asking questions.
+2. ZERO stubs. No TODO, no fake data, no 'Not implemented'.
+3. 'Done' = works end-to-end for a real user. UI without backend = NOT done.
+4. Read QUALITY.md for the full definition of done.
+```
 
 ### 2. Config Protection — No Shortcuts
 
@@ -100,7 +112,7 @@ Claude Code has a finite context window. This hook counts tool calls and suggest
 
 ### 6. Session Reminder — Fighting Drift
 
-Injects your custom context lines on every prompt. Configurable — use it for whatever your agent keeps forgetting.
+Injects your custom context lines on every prompt. Compact single-line output to minimize token overhead. Configurable — use it for whatever your agent keeps forgetting.
 
 ### 7. Session Learn — Institutional Memory
 
@@ -120,6 +132,18 @@ Learnings are written to `LL.md` in structured format (Date, Symptom, Cause, Imp
 Scans every file you edit for database queries (`.find()`, `.updateMany()`, `.aggregate()`, etc.) and checks if `tenantId` appears within ±5 lines. If not — warning.
 
 **Why this matters:** In multi-tenant SaaS, a single missing tenant filter is a data breach. Not a bug — a breach. This hook catches it at write time, not in code review.
+
+Example output:
+
+```
+claude-code-guard: Potential missing tenant isolation in userService.ts
+
+Database queries without 'tenantId' in nearby context:
+  Line 42: const users = await User.find({ role: 'admin' })
+  Line 67: await Order.deleteMany({ status: 'expired' })
+
+Every query MUST filter by tenantId. Missing it = data leak across tenants.
+```
 
 ```json
 {
@@ -141,6 +165,18 @@ Detects four categories of PII exposure:
 2. **Hardcoded PII** — real email addresses, IBAN numbers in source code (skips test files)
 3. **PII in URLs** — `?email=john@example.com` in query parameters
 4. **PII in responses** — `res.json({ password, hash, ssn })` returned to clients
+
+Example output:
+
+```
+claude-code-guard: Potential PII exposure in apiController.ts
+
+Found patterns that may expose personal data:
+  PII in log: 47: logger.info('User logged in', { email: user.email })
+  PII in response: 83: res.json({ user: { password: user.password, ...userData } })
+
+PII must be redacted in logs, excluded from API responses, and never hardcoded.
+```
 
 ```json
 {
@@ -201,49 +237,16 @@ Claude Code supports lifecycle hooks — shell scripts that fire before or after
 
 Hooks are registered in `~/.claude/settings.json` (global) or `.claude/settings.json` (project-level). `claude-code-guard` manages this automatically.
 
-## Companion Tools
+## Works well with
 
-These tools pair well with claude-code-guard for a complete agent governance + efficiency setup:
-
-### RTK — Token-Optimized CLI Proxy
-
-[RTK](https://github.com/contextcraft/rtk) is a Rust-based CLI proxy that filters verbose command output before it hits the context window. Transparent hook integration — `git status` becomes `rtk git status` automatically.
-
-- **60-90% input token savings** on CLI output (measured 91.5% across 150+ commands)
-- Automatic secret redaction (complements audit-log hook)
-- Zero config — install and forget
-
-```bash
-cargo install rtk
-```
-
-### Caveman — Output Compression
-
-[Caveman](https://github.com/JuliusBrussee/caveman) is a Claude Code plugin that makes the agent respond in compressed, caveman-style language — same technical accuracy, ~75% fewer output tokens.
-
-```bash
-# Install as Claude Code plugin
-claude install caveman
-```
-
-Includes bonus skills: `caveman-commit` (terse commits), `caveman-review` (one-line code reviews), `caveman-compress` (~45% input savings on CLAUDE.md files).
-
-### Cost Optimization — Advisor Strategy
-
-When spawning sub-agents, use model tiering to cut costs without losing quality:
-
-```
-model: "haiku"   → file searches, grep, simple reads (85% cheaper)
-model: "sonnet"  → code changes, moderate complexity (default)
-model: "opus"    → architecture decisions, complex debugging (when needed)
-```
-
-This pairs with the **agent-guard** hook — sub-agents are both context-aware (guard) and cost-efficient (tiering).
+- **[RTK](https://github.com/contextcraft/rtk)** — Rust CLI proxy, 60-90% input token savings on command output
+- **[Caveman](https://github.com/JuliusBrussee/caveman)** — Claude Code plugin, ~75% output token compression
 
 ## Roadmap
 
 Planned hooks and features — contributions welcome.
 
+- [ ] **npm publish** — `npx claude-code-guard init` without cloning
 - [ ] **dependency-check** — Block imports of deprecated or vulnerable packages
 - [ ] **test-coverage-gate** — Warn when modified files lack corresponding test files
 - [ ] **commit-message-lint** — Enforce conventional commits format
@@ -262,7 +265,3 @@ Have an idea? [Open an issue](https://github.com/didierthill/024-OSS-forged-clau
 ## License
 
 MIT
-
----
-
-*This code has been AI-assisted using [Claude Code](https://claude.ai/claude-code).*
